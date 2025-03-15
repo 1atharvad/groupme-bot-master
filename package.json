@@ -1,0 +1,21 @@
+{
+  "name": "groupme-bot-master",
+  "version": "1.0.0",
+  "description": "A GroupMe bot for sending messages to multiple groups after getting approval from the approvers.",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload",
+    "deploy": "vercel --prod"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1atharvad/groupme-bot-master.git"
+  },
+  "author": "Atharva Devasthali",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/1atharvad/groupme-bot-master/issues"
+  },
+  "homepage": "https://github.com/1atharvad/groupme-bot-master#readme"
+}
