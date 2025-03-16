@@ -1,12 +1,16 @@
 from fastapi import FastAPI, Request
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from .groupme_bot import GroupMeBot
 
 app = FastAPI()   
 bot = GroupMeBot()
+templates = Jinja2Templates(directory="src/templates")
+app.mount("/src/static", StaticFiles(directory="src/static"), name="static")
 
 @app.get("/")
-async def home():
-    return {"message": "GroupMe Bot is running!"}
+async def home(request: Request):
+    return templates.TemplateResponse("pages/home.jinja", {"request": request})
 
 @app.post("/webhook")
 async def webhook(request: Request):

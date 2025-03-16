@@ -98,6 +98,4 @@ class GroupMeBot:
     
 if __name__ == '__main__':
     bot = GroupMeBot()
-    # print(bot.create_bot(TARGET_BOT_NAME, '106602750'))
     print([bot_details['bot_id'] for bot_details in bot.get_bot_details(TARGET_BOT_NAME, TARGET_GROUP_IDS)])
-    # print(bot.get_group_members('106602737'))
