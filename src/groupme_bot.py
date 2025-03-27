@@ -122,7 +122,7 @@ class GroupMeBot:
     def send_message_to_groups(self, user, message=''):
         """Send a message to a specific GroupMe group using the group_id."""
         message = message if message else self.pending_approval_message
-        target_bot_details = db.get_target_bot_details(user['user_name'])
+        target_bot_details = db.get_target_bot_details(user[0]['user_name'])
 
         if target_bot_details:
             bot_details = self.get_bot_details(target_bot_details['bot_names'], target_bot_details['group_ids'], user=user)
@@ -138,7 +138,7 @@ class GroupMeBot:
 
     def send_message(self, user, message: str):
         url = f"{self.api_url}/bots/post"
-        admin_bot_details = db.get_admin_bot_details(user['user_name'])
+        admin_bot_details = db.get_admin_bot_details(user[0]['user_name'])
         print(admin_bot_details)
 
         if admin_bot_details:
