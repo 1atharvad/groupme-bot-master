@@ -40,7 +40,7 @@ async def webhook(request: Request):
                 '✅ Reply with `/approve` to send.\n'
                 '❌ Reply with `/reject` to deny.'
             )
-            bot.send_message(user, approval_request)
+            bot.send_message(user[0], approval_request)
             return {"status": "approval requested"}
         return {"status": "user not found"}
 
@@ -49,12 +49,12 @@ async def webhook(request: Request):
         if user:
             if sender_name in bot.get_admin_name(user[0]['admin_group_id'], user[0]['user_name']):
                 if message_text.startswith("/approve"):
-                    bot.send_message(user, 'Message approved and sent to all groups.')
-                    bot.send_message_to_groups(user)
+                    bot.send_message(user[0], 'Message approved and sent to all groups.')
+                    bot.send_message_to_groups(user[0])
                     bot.pending_approval_message = ''
                     return {"status": "message sent"}
                 elif message_text.startswith("/reject"):
-                    bot.send_message(user, "Message rejected.")
+                    bot.send_message(user[0], "Message rejected.")
                     bot.pending_approval_message = ''
                     return {"status": "message rejected"}
                 return {"status": "pending approval"}
