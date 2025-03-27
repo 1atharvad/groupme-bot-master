@@ -1,0 +1,55 @@
+@use 'global/global-colors' as colors;
+@use 'global/global-vars' as vars;
+
+.admin-details,
+.target-details {
+  background: colors.$white;
+  border-radius: 5px;
+  box-shadow: 0 0 25px 6px rgba(colors.$black, 0.1);
+  margin: 30px;
+  padding: 1px 20px 20px;
+
+  .title-grid {
+    display: flex;
+    justify-content: space-between;
+
+    .submit-btn {
+      height: auto;
+      margin: auto 0;
+      padding: 10px 16px;
+    }
+  }
+
+  .create-btn {
+    color: #40476D;
+    cursor: pointer;
+    background: #faddb9;
+    border: 1px solid;
+    border-radius: 5px;
+    font-family: vars.$font-dosis;
+    padding: 12px 16px;
+    font-size: 16px;
+
+    &:hover {
+      background: #e9ceac;
+    }
+  }
+
+  .add-new-btn {
+    margin-top: 20px;
+  }
+}
+
+.bot-details {
+  display: flex;
+  gap: 10px;
+
+  &:not(:first-of-type) {
+    margin-top: 15px;
+  }
+
+  .input-item {
+    flex-grow: 1;
+    margin: 0;
+  }
+}

@@ -1,15 +1,15 @@
 import os
 import requests
 from dotenv import load_dotenv
+from src.database.mongodb_client import MongodbClient
 
 load_dotenv()
 
-BOT_ID = os.getenv("GROUPME_BOT_ID")
-ACCESS_TOKEN = os.getenv("GROUPME_ACCESS_TOKEN")
-ADMIN_GROUP_ID = os.getenv("ADMIN_GROUP_ID")
-TARGET_BOT_NAME = os.getenv('TARGET_BOT_NAME')
-TARGET_GROUP_IDS = os.getenv("TARGET_GROUP_IDS").split(",")
 CALLBACK_URL = os.getenv('CALLBACK_URL')
+MONGO_URI = os.getenv('MONGO_URI')
+DB_NAME= os.getenv('DB_NAME')
+
+db = MongodbClient()
 
 class GroupMeBot:
     _instance = None
@@ -22,24 +22,43 @@ class GroupMeBot:
     def __init__(self):
         self.pending_approval_message = ''
         self.api_url = 'https://api.groupme.com/v3'
-        self.admin_group_admin = self.get_admin_name(ADMIN_GROUP_ID)
 
-    def get_bot_details(self, bot_name: str, group_ids: str|list):
+    def get_all_group_ids(self, username):
+        url = f"{self.api_url}/groups"
+        user = list(db.get_collection('config', {'user_name': username}))
+
+        if len(user) > 0:
+            response = requests.get(url, params={"token": user[0]['access_token']})
+
+            return [{
+                'id': group_details['group_id'],
+                'name': group_details['name'],
+                'admins': [{
+                    'user_id': member['user_id'],
+                    'name': member['name']
+                    } for member in filter(lambda x: 'admin' in x['roles'], group_details['members'])]
+                } for group_details in response.json()['response']]
+        return None
+
+    def get_bot_details(self, bot_name: str, group_ids: str|list, username: str ='', user: any = None):
         url = f"{self.api_url}/bots"
-        response = requests.get(url, params={"token": ACCESS_TOKEN})
-        
-        if response.status_code == 200:
-            bots = response.json().get("response", [])
-            if type(group_ids) == str:
-                bots = list(filter(lambda bot: bot['group_id'] == group_ids and bot['name'] == bot_name, bots))
-                return bots[0] if len(bots) > 0 else None
-            else:
-                return list(filter(lambda bot: bot['group_id'] in group_ids and bot['name'] == bot_name, bots))
-        else:
-            return None
+        if username:
+            user = list(db.get_collection('config', {'user_name': username}))
 
-    def create_bot(self, bot_name: str, group_id: str):
-        bot = self.get_bot_details(bot_name, group_id)
+        if user and len(user) > 0:
+            response = requests.get(url, params={"token": user[0]['access_token']})
+            
+            if response.status_code == 200:
+                bots = response.json().get("response", [])
+                if type(group_ids) == str:
+                    bots = list(filter(lambda bot: bot['group_id'] == group_ids and bot['name'] == bot_name, bots))
+                    return bots[0] if len(bots) > 0 else None
+                else:
+                    return list(filter(lambda bot: bot['group_id'] in group_ids and bot['name'] == bot_name, bots))
+        return None
+
+    def create_bot(self, username: str, bot_name: str, group_id: str):
+        bot = self.get_bot_details(bot_name, group_id, username=username)
 
         if not bot:
             url = f"{self.api_url}/bots"
@@ -52,50 +71,106 @@ class GroupMeBot:
                     "dm_notification": False
                 }
             }
-            response = requests.post(url, json=data, headers=headers, params={"token": ACCESS_TOKEN})
+            user = list(db.get_collection('config', {'user_name': username}))
+            response = requests.post(url, json=data, headers=headers, params={"token": user[0]['access_token']})
             return response.json()
         else:
             return bot
+        
+    def update_bot(self, username: str, bot_name: str, group_id: str, new_name: str):
+        bot = self.get_bot_details(bot_name, group_id, username=username)
 
-    def send_message_to_groups(self, message=''):
+        if bot:
+            url = f"{self.api_url}/bots/update"
+            headers = {"Content-Type": "application/json"}
+            data = {
+                "bot": {
+                    "bot_id": bot['bot_id'],
+                    "name": new_name
+                }
+            }
+            user = list(db.get_collection('config', {'user_name': username}))
+            response = requests.post(url, json=data, headers=headers, params={"token": user[0]['access_token']})
+            
+            if response.status_code == 200:
+                return {"message": "Bot updated successfully!"}
+            else:
+                return {"error": f"Failed to update bot: {response.text}"}
+        else:
+            return {"error": "Bot not found!"}
+        
+    def delete_bot(self, username: str, bot_name: str, group_id: str):
+        bot = self.get_bot_details(bot_name, group_id, username=username)
+
+        if bot:
+            url = f"{self.api_url}/bots/destroy"
+            headers = {"Content-Type": "application/json"}
+            data = {
+                "bot_id": bot['bot_id']
+            }
+            user = list(db.get_collection('config', {'user_name': username}))
+            response = requests.post(url, json=data, headers=headers, params={"token": user[0]['access_token']})
+            print(response, response.text)
+            
+            if response.status_code == 200:
+                return {"message": "Bot deleted successfully!"}
+            else:
+                return {"error": f"Failed to delete bot: {response.text}"}
+        else:
+            return {"error": "Bot not found!"}
+
+    def send_message_to_groups(self, user, message=''):
         """Send a message to a specific GroupMe group using the group_id."""
         message = message if message else self.pending_approval_message
-        bot_ids = [bot_details['bot_id'] for bot_details in self.get_bot_details(TARGET_BOT_NAME, TARGET_GROUP_IDS)]
+        target_bot_details = db.get_target_bot_details(user['user_name'])
 
-        for bot_id in bot_ids:
-            url = f"{self.api_url}/bots/post"
-            payload = {
-                "bot_id": bot_id,
-                "text": message
-            }
+        if target_bot_details:
+            bot_details = self.get_bot_details(target_bot_details['bot_names'], target_bot_details['group_ids'], user=user)
+
+            if bot_details:
+                for bot_details in bot_details:
+                    url = f"{self.api_url}/bots/post"
+                    payload = {
+                        "bot_id": bot_details['bot_id'],
+                        "text": message
+                    }
+                    requests.post(url, json=payload)
+
+    def send_message(self, user, message: str):
+        url = f"{self.api_url}/bots/post"
+        admin_bot_details = db.get_admin_bot_details(user['user_name'])
+        print(admin_bot_details)
+
+        if admin_bot_details:
+            bot_details = self.get_bot_details(admin_bot_details['bot_name'], admin_bot_details['group_id'], user=user)
+
+            if bot_details:
+                payload = {
+                    "bot_id": bot_details['bot_id'],
+                    "text": message
+                }
             requests.post(url, json=payload)
 
-    def send_message(self, message: str):
-        url = f"{self.api_url}/bots/post"
-        payload = {
-            "bot_id": BOT_ID,
-            "text": message
-        }
-        requests.post(url, json=payload)
-
-    def get_group_members(self, group_id):
+    def get_group_members(self, group_id, username):
         """Fetch the members of a GroupMe group."""
         url = f"{self.api_url}/groups/{group_id}"
-        response = requests.get(url, params={"token": ACCESS_TOKEN})
-        
-        if response.status_code == 200:
-            return response.json()['response']['members']
-        else:
-            return None
+        user = list(db.get_collection('config', {'user_name': username}))
 
-    def get_admin_name(self, group_id):
+        if len(user) > 0:
+            response = requests.get(url, params={"token": user[0]['access_token']})
+            
+            if response.status_code == 200:
+                return response.json()['response']['members']
+        return None
+
+    def get_admin_name(self, group_id, username):
+        print(group_id, username)
         admins = []
         
-        for member in self.get_group_members(group_id):
+        for member in self.get_group_members(group_id, username):
             if 'admin' in member['roles']:
                 admins.append(member['name'])
         return admins
     
 if __name__ == '__main__':
     bot = GroupMeBot()
-    print([bot_details['bot_id'] for bot_details in bot.get_bot_details(TARGET_BOT_NAME, TARGET_GROUP_IDS)])

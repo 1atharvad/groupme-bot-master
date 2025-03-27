@@ -1,0 +1,68 @@
+@use 'global/global-colors' as colors;
+@use 'global/global-vars' as vars;
+
+.login,
+.signup {
+  &-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 64px);
+  }
+
+  &-box {
+    background-color: #ffede0;
+    padding: 30px;
+    margin: 0 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 25px 6px rgba(colors.$black, 0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+
+    .title {
+      font-size: 28px;
+      font-weight: 600;
+      color: colors.$text-color;
+      margin-bottom: 10px;
+    }
+
+    .description {
+      font-size: 14px;
+      color: #757575;
+      margin-bottom: 20px;
+    }
+  }
+
+  &-form {
+    text-align: right;
+
+    .signup-link {
+      text-decoration: none;
+    }
+  }
+
+  &-button {
+    color: #40476D;
+    cursor: pointer;
+    background: #faddb9;
+    border: 1px solid;
+    border-radius: 5px;
+    font-family: vars.$font-dosis;
+    letter-spacing: 1px;
+    width: 100%;
+    margin: 15px 0 7px;
+    padding: 12px 24px;
+    font-size: 20px;
+    text-transform: uppercase;
+
+    &:hover {
+      background: #e9ceac;
+    }
+  
+    &:disabled {
+      background-color: #BDC3C7;
+      cursor: not-allowed;
+    }
+  }
+}

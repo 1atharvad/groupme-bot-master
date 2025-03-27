@@ -1,0 +1,33 @@
+@use 'global-colors' as colors;
+@use 'global-vars' as vars;
+
+body {
+  background-color: colors.$background-color;
+  font-family: vars.$font-dosis;
+  margin: 0;
+  padding: 0;
+}
+
+.input {
+  &-item {
+    height: 50px;
+    position: relative;
+    width: 100%;
+
+    &:not(:first-of-type) {
+      margin-top: 12px;
+    }
+
+    .MuiInputLabel-formControl {
+      font-family: vars.$font-dosis;
+    }
+
+    .MuiInputBase-formControl {
+      background: colors.$white;
+    }
+
+    .MuiInputBase-input {
+      font-family: vars.$font-dosis;
+    }
+  }
+}

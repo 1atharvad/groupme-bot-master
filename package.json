@@ -5,9 +5,9 @@
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "webpack --progress --watch --config webpack.config.js --mode development & uvicorn src.app:app --host 0.0.0.0 --port 8000 --reload",
+    "dev": "uvicorn src.app:app --host 0.0.0.0 --port 8000 --reload",
     "build": "webpack --config webpack.prod.js --mode production",
-    "deploy": "npm run build && vercel --prod"
+    "deploy": "vercel --prod"
   },
   "repository": {
     "type": "git",
@@ -20,18 +20,9 @@
   },
   "homepage": "https://github.com/1atharvad/groupme-bot-master#readme",
   "devDependencies": {
-    "css-loader": "^7.1.2",
-    "mini-css-extract-plugin": "^2.7.6",
-    "sass": "^1.85.1",
-    "sass-loader": "^16.0.5",
-    "style-loader": "^4.0.0",
-    "ts-loader": "^9.5.2",
-    "webpack": "^5.98.0",
-    "webpack-cli": "^6.0.1",
-    "webpack-merge": "^5.9.0"
+    "css-loader": "^7.1.2"
   },
   "dependencies": {
-    "postcss-cli": "^11.0.1",
-    "typescript": "^5.8.2"
+    "postcss-cli": "^11.0.1"
   }
 }
