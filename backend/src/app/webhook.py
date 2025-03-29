@@ -7,7 +7,9 @@ bot = GroupMeBot()
 db = MongodbClient()
 
 def get_user(group_id):
+    print({'admin_group_id': group_id})
     user = list(db.get_collection('config', {'admin_group_id': group_id}))
+    print(user)
     return user if len(user) > 0 else None
 
 @router.post("/webhook")
