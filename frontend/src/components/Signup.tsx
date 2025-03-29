@@ -5,6 +5,7 @@ import '../scss/login.scss';
 import { Link } from './Link';
 
 export const Signup = () => {
+  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
   const [inputValues, setInputValues] = useState({
     'username': '',
     'client_id': ''
@@ -21,7 +22,7 @@ export const Signup = () => {
   const onSubmit = (event: any) => {
     event.preventDefault();
 
-    fetch(`http://localhost:8000/api/set-client-id`, {
+    fetch(`${apiUrl}api/set-client-id`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

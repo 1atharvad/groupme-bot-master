@@ -2,7 +2,7 @@ from bson import json_util
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from ..groupme_bot import GroupMeBot
+from src.bot.groupme_bot import GroupMeBot
 from src.database.mongodb_client import MongodbClient
 
 router = APIRouter()
@@ -53,8 +53,7 @@ async def getGroupIds(username: str):
         return JSONResponse({"group_ids": group_ids})
     except HTTPException as http_e:
         raise http_e
-    except Exception as e:
-        print(e)
+    except Exception:
         raise HTTPException(status_code=500, detail="Internal server error")
     
 @router.get("/api/get-bot-groups/{username}")
@@ -74,7 +73,6 @@ async def getGroupForBot(username: str):
 async def createGroupForBot(request_data: BotDetailsRequest):    
     try:
         request_dict = request_data.model_dump()
-        print(request_dict)
         response = db.add_to_collection('groups', request_dict)
 
         if response.acknowledged:
@@ -83,8 +81,7 @@ async def createGroupForBot(request_data: BotDetailsRequest):
             return JSONResponse(request_dict)
         else:
             raise HTTPException(status_code=500, detail="Failed to insert document")
-    except Exception as e:
-        print(e)
+    except Exception:
         raise HTTPException(status_code=500, detail="Internal server error")
     
 @router.put("/api/update-bot-groups/{id}")
@@ -98,7 +95,6 @@ async def updateGroupForBot(id: str, request_data: BotDetailsRequest):
             if bot_details['bot_name'] != request_dict['bot_name']:
                 bot.update_bot(request_dict['user_name'], bot_details['bot_name'], bot_details['group_id'], request_dict['bot_name'])
             if bot_details['group_name'] != request_dict['group_name']:
-                print(bot_details['bot_name'], bot_details['group_id'], request_dict['bot_name'], request_dict['group_id'])
                 bot.delete_bot(request_dict['user_name'], bot_details['bot_name'], bot_details['group_id'])
                 bot.create_bot(request_dict['user_name'], request_dict['bot_name'], request_dict['group_id'])
             request_dict['_id'] = str(id)
@@ -119,6 +115,5 @@ async def deleteGroupBot(id: str):
             return JSONResponse({'message': 'Group details deleted'})
         else:
             raise HTTPException(status_code=500, detail="Failed to delete the document")
-    except Exception as e:
-        print(e)
+    except Exception:
         raise HTTPException(status_code=500, detail="Internal server error")

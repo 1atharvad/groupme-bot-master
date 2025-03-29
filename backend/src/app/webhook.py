@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request
-from ..groupme_bot import GroupMeBot
+from src.bot.groupme_bot import GroupMeBot
 from src.database.mongodb_client import MongodbClient
 
 router = APIRouter()
@@ -8,7 +8,6 @@ db = MongodbClient()
 
 def get_user(group_id):
     user = list(db.get_collection('config', {'admin_group_id': group_id}))
-    print(user)
     return user if len(user) > 0 else None
 
 @router.post("/webhook")
@@ -30,7 +29,6 @@ async def webhook(request: Request):
             request_text = message_text.replace("/need_approval", "").strip()
             bot.pending_approval_message = request_text
             admin_names = bot.get_admin_name(user[0]['admin_group_id'], user[0]['user_name'])
-            print(admin_names)
 
             approval_request = (
                 f"**Approval Needed**\n"

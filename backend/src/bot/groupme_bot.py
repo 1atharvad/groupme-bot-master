@@ -110,7 +110,6 @@ class GroupMeBot:
             }
             user = list(db.get_collection('config', {'user_name': username}))
             response = requests.post(url, json=data, headers=headers, params={"token": user[0]['access_token']})
-            print(response, response.text)
             
             if response.status_code == 200:
                 return {"message": "Bot deleted successfully!"}
@@ -139,7 +138,6 @@ class GroupMeBot:
     def send_message(self, user, message: str):
         url = f"{self.api_url}/bots/post"
         admin_bot_details = db.get_admin_bot_details(user[0]['user_name'])
-        print(admin_bot_details)
 
         if admin_bot_details:
             bot_details = self.get_bot_details(admin_bot_details['bot_name'], admin_bot_details['group_id'], user=user)
@@ -164,7 +162,6 @@ class GroupMeBot:
         return None
 
     def get_admin_name(self, group_id, username):
-        print(group_id, username)
         admins = []
         
         for member in self.get_group_members(group_id, username):

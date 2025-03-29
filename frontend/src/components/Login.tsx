@@ -5,6 +5,7 @@ import '../scss/login.scss';
 import { Link } from './Link';
 
 export const Login = () => {
+  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
   const [username, setUsername] = useState('');
 
   const handleChange = (e: any) => {
@@ -16,7 +17,7 @@ export const Login = () => {
   const onSubmit = (event: any) => {
     event.preventDefault();
 
-    fetch(`http://localhost:8000/api/get-client-id/${username}`, {
+    fetch(`${apiUrl}api/get-client-id/${username}`, {
       method: "GET"
     })
       .then(response => {

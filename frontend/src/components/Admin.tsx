@@ -6,6 +6,7 @@ import { BotEntryDetails } from "./BotEntryDetails";
 import { BotDetails } from "../constants";
 
 export const Admin = () => {
+  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
   const storedUsername = sessionStorage.getItem("username");
   const [groupIds, setGroupIds] = useState<{[key: string]: string}[]>([]);
   const [groupDetails, setGroupDetails] = useState<{[key: string]: BotDetails[]}>({});
@@ -23,7 +24,7 @@ export const Admin = () => {
 
   useEffect(() => {
     if (storedUsername) {
-      fetch(`http://localhost:8000/api/get-group-ids/${storedUsername}`, {
+      fetch(`${apiUrl}api/get-group-ids/${storedUsername}`, {
         method: "GET"
       })
         .then(response => {
@@ -37,7 +38,7 @@ export const Admin = () => {
         })
         .catch((error) => console.error("Error fetching client ID:", error));
       
-      fetch(`http://localhost:8000/api/get-bot-groups/${storedUsername}`, {
+      fetch(`${apiUrl}api/get-bot-groups/${storedUsername}`, {
         method: "GET"
       })
         .then(response => {
@@ -70,7 +71,7 @@ export const Admin = () => {
         console.log(group)
         group['bot_status'] = 'exists';
 
-        fetch(`http://localhost:8000/api/set-bot-groups`, {
+        fetch(`${apiUrl}api/set-bot-groups`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -96,7 +97,7 @@ export const Admin = () => {
       } else if (group['bot_status'] === 'updated') {
         group['bot_status'] = 'exists';
 
-        fetch(`http://localhost:8000/api/update-bot-groups/${group['_id']}`, {
+        fetch(`${apiUrl}api/update-bot-groups/${group['_id']}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -126,7 +127,7 @@ export const Admin = () => {
   const deleteEntry = (group: BotDetails) => {
     console.log(group)
     if (group.bot_status !== 'created') {
-      fetch(`http://localhost:8000/api/delete-bot-group/${group['_id']}`, {
+      fetch(`${apiUrl}api/delete-bot-group/${group['_id']}`, {
         method: "DELETE"
       })
         .then(response => {
