@@ -68,7 +68,6 @@ export const Admin = () => {
   const submitBtn = (_type: string) => {
     groupDetails[_type].map((group, index) => {
       if (group['bot_status'] === 'created') {
-        console.log(group)
         group['bot_status'] = 'exists';
 
         fetch(`${apiUrl}api/set-bot-groups`, {
@@ -125,7 +124,6 @@ export const Admin = () => {
   }
 
   const deleteEntry = (group: BotDetails) => {
-    console.log(group)
     if (group.bot_status !== 'created') {
       fetch(`${apiUrl}api/delete-bot-group/${group['_id']}`, {
         method: "DELETE"

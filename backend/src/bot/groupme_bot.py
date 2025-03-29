@@ -122,11 +122,9 @@ class GroupMeBot:
         """Send a message to a specific GroupMe group using the group_id."""
         message = message if message else self.pending_approval_message
         target_bot_details = db.get_target_bot_details(user[0]['user_name'])
-        print(target_bot_details, message)
 
         if target_bot_details:
             bot_details = self.get_bot_details(target_bot_details['bot_names'], target_bot_details['group_ids'], user=user)
-            print(bot_details)
 
             if bot_details:
                 for bot_details in bot_details:
