@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "VITE_REACT_APP_API_URL=http://localhost:8000/ && vite",
-    "build": "VITE_REACT_APP_API_URL=/ && tsc -b && vite build",
+    "dev": "vite",
+    "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
