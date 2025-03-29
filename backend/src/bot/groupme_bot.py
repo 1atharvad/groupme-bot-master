@@ -26,6 +26,7 @@ class GroupMeBot:
     def get_all_group_ids(self, username):
         url = f"{self.api_url}/groups"
         user = list(db.get_collection('config', {'user_name': username}))
+        print(user)
 
         if len(user) > 0:
             response = requests.get(url, params={"token": user[0]['access_token']})
