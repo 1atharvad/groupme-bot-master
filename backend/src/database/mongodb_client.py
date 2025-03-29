@@ -90,8 +90,7 @@ class MongodbClient:
         for group in target_groups:
             target_bot_details['bot_names'].append(group['bot_name'])
             target_bot_details['group_ids'].append(group['group_id'])
-            return target_bot_details
-        return None
+        return target_bot_details
 
     def get_collection(self, collection_name, filter_query={}):
         if '_id' in filter_query:

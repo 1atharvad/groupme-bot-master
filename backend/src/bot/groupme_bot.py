@@ -40,7 +40,7 @@ class GroupMeBot:
                 } for group_details in response.json()['response']]
         return None
 
-    def get_bot_details(self, bot_name: str, group_ids: str|list, username: str ='', user: any = None):
+    def get_bot_details(self, bot_name: str|list, group_ids: str|list, username: str ='', user: any = None):
         url = f"{self.api_url}/bots"
         if username:
             user = list(db.get_collection('config', {'user_name': username}))
@@ -50,11 +50,11 @@ class GroupMeBot:
             
             if response.status_code == 200:
                 bots = response.json().get("response", [])
-                if type(group_ids) == str:
+                if type(group_ids) == str and type(bot_name) == str:
                     bots = list(filter(lambda bot: bot['group_id'] == group_ids and bot['name'] == bot_name, bots))
                     return bots[0] if len(bots) > 0 else None
                 else:
-                    return list(filter(lambda bot: bot['group_id'] in group_ids and bot['name'] == bot_name, bots))
+                    return list(filter(lambda bot: bot['group_id'] in group_ids and bot['name'] in bot_name, bots))
         return None
 
     def create_bot(self, username: str, bot_name: str, group_id: str):
@@ -126,6 +126,7 @@ class GroupMeBot:
 
         if target_bot_details:
             bot_details = self.get_bot_details(target_bot_details['bot_names'], target_bot_details['group_ids'], user=user)
+            print(bot_details)
 
             if bot_details:
                 for bot_details in bot_details:
