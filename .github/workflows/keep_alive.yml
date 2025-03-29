@@ -7,4 +7,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Ping API
-        run: curl -X GET https://groupme-bot-master.vercel.app
+        run: curl -X GET https://groupme-bot-master.onrender.com/
