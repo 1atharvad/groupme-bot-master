@@ -89,6 +89,7 @@ class GroupBotMessageSystem:
 
             if request_text == '':
                 request_text = self.get_pending_approval_message()
+            print(llm.get_query_response(request_text))
             request_text = llm.get_query_response(request_text).get('improved_data', '')
             self.set_pending_approval_message(request_text)
 
