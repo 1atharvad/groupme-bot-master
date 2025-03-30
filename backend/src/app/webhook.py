@@ -44,6 +44,8 @@ class GroupBotMessageSystem:
             return self.handle_help()
         elif self.message_text.startswith("/need_approval"):
             return self.send_approval_request()
+        elif self.message_text.startswith("/improve"):
+            return self.improve_message()
         elif self.message_text == "/status":
             return self.send_status()
 
