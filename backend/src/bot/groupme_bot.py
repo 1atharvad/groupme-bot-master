@@ -20,7 +20,6 @@ class GroupMeBot:
         return cls._instance
     
     def __init__(self):
-        self.pending_approval_message = ''
         self.api_url = 'https://api.groupme.com/v3'
 
     def get_all_group_ids(self, username):
@@ -120,7 +119,6 @@ class GroupMeBot:
 
     def send_message_to_groups(self, user, message=''):
         """Send a message to a specific GroupMe group using the group_id."""
-        message = message if message else self.pending_approval_message
         target_bot_details = db.get_target_bot_details(user[0]['user_name'])
 
         if target_bot_details:
