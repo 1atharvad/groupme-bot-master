@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <>
       <div className='dashboard'>
-        <h1 className="title">GroupMe Chatbot for Automated Message Approval System</h1>
+        <h1 className="dashboard-title">GroupMe Chatbot for Automated Message Approval System</h1>
         <Link className="admin-link" link={{url: '/admin', is_external_link: false}}>
           Dashboard
         </Link>

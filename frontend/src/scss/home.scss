@@ -1,4 +1,5 @@
 @use 'global/global-colors' as colors;
+@use 'global/global-vars' as vars;
 
 .dashboard {
   align-items: center;
@@ -8,10 +9,29 @@
   justify-content: center;
   height: 100vh;
   margin-top: -64px;
-}
 
-.title {
-  font-size: min(9vw, 12vh);
-  margin: 0 30px;
-  text-align: center;
+  &-title {
+    font-size: min(9vw, 9vh);
+    margin: 0 30px;
+    text-align: center;
+  }
+
+  .admin-link {
+    color: #40476D;
+    cursor: pointer;
+    background: #faddb9;
+    border: 1px solid;
+    border-radius: 5px;
+    font-family: vars.$font-dosis;
+    letter-spacing: 1px;
+    margin: 40px 0 7px;
+    padding: 12px 24px;
+    font-size: 20px;
+    text-decoration: none;
+    text-transform: uppercase;
+
+    &:hover {
+      background: #e9ceac;
+    }
+  }
 }
