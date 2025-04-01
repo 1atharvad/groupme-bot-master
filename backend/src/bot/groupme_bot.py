@@ -45,7 +45,7 @@ class GroupMeBot:
             user = list(db.get_collection('config', {'user_name': username}))
 
         if user and len(user) > 0:
-            response = requests.get(url, params={"token": user[0]['access_token']})
+            response = requests.get(url, params={"token": user['access_token']})
             
             if response.status_code == 200:
                 bots = response.json().get("response", [])
@@ -119,7 +119,7 @@ class GroupMeBot:
 
     def send_message_to_groups(self, user, message=''):
         """Send a message to a specific GroupMe group using the group_id."""
-        target_bot_details = db.get_target_bot_details(user[0]['user_name'])
+        target_bot_details = db.get_target_bot_details(user['user_name'])
 
         if target_bot_details:
             bot_details = self.get_bot_details(target_bot_details['bot_names'], target_bot_details['group_ids'], user=user)
@@ -135,7 +135,7 @@ class GroupMeBot:
 
     def send_message(self, user, message: str):
         url = f"{self.api_url}/bots/post"
-        admin_bot_details = db.get_admin_bot_details(user[0]['user_name'])
+        admin_bot_details = db.get_admin_bot_details(user['user_name'])
 
         if admin_bot_details:
             bot_details = self.get_bot_details(admin_bot_details['bot_name'], admin_bot_details['group_id'], user=user)

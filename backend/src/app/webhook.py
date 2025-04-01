@@ -25,19 +25,29 @@ class GroupBotMessageSystem:
         self.user = self.get_user(payload.get('group_id', ''))
         self.message_text = payload.get('text', '')
         self.sender_name = payload.get("name", "Unknown")
+    
+    @staticmethod
+    def get_user(group_id):
+        admin = list(db.get_collection('groups', {'group_id': group_id, 'type': 'admin_group'}))
 
-    def get_user(self, group_id):
-        user = list(db.get_collection('config', {'admin_group_id': group_id}))
-        return user if len(user) > 0 else None
+        if admin and len(admin) > 0:
+            username = admin[0]['user_name']
+            user = list(db.get_collection('config', {'user_name': username}))
+
+            if user and len(user) > 0:
+                user_details = user[0]
+                user_details['admin_group_id'] = group_id
+                return user_details
+        return None
     
     def get_pending_approval_message(self):
         if self.user:
-            return self.pending_approval_message.get(self.user[0]['user_name'], '')
+            return self.pending_approval_message.get(self.user['user_name'], '')
         return ''
     
     def set_pending_approval_message(self, message):
         if self.user:
-            self.pending_approval_message[self.user[0]['user_name']] = message
+            self.pending_approval_message[self.user['user_name']] = message
     
     def handle_system(self):
         if self.message_text == "/help":
@@ -97,7 +107,7 @@ class GroupBotMessageSystem:
             improve_request = (
                 f"**Improve using AI**\n"
                 f"👤 @{self.sender_name} has requested an improvement.\n\n"
-                f'Message: "{self.get_pending_approval_message()}"\n\n'
+                f'Improved Message: "{self.get_pending_approval_message()}"\n\n'
                 '✅ Reply with `/need_approval` to send the message for approval.\n'
                 '✍️ Reply with `/improve` for further improvements.\n'
                 '❌ Reply with `/cancel` to cancel the current message thread.'
@@ -108,7 +118,7 @@ class GroupBotMessageSystem:
     
     def handle_improve_with_llm(self):
         if self.user:
-            if self.sender_name in bot.get_admin_name(self.user[0]['admin_group_id'], self.user[0]['user_name']):
+            if self.sender_name in bot.get_admin_name(self.user['admin_group_id'], self.user['user_name']):
                 if self.message_text == "/need_approval":
                     return self.send_approval_request()
                 elif self.message_text == "/improve":
@@ -124,7 +134,7 @@ class GroupBotMessageSystem:
     def send_approval_request(self):
         if self.user:
             self.request_type = 'approval'
-            admin_names = bot.get_admin_name(self.user[0]['admin_group_id'], self.user[0]['user_name'])
+            admin_names = bot.get_admin_name(self.user['admin_group_id'], self.user['user_name'])
             request_text = self.message_text.replace("/need_approval", "").strip()
 
             if request_text == '':
@@ -145,7 +155,7 @@ class GroupBotMessageSystem:
 
     def handle_approval(self):
         if self.user:
-            if self.sender_name in bot.get_admin_name(self.user[0]['admin_group_id'], self.user[0]['user_name']):
+            if self.sender_name in bot.get_admin_name(self.user['admin_group_id'], self.user['user_name']):
                 if self.message_text.startswith("/approve"):
                     self.request_type = ''
                     bot.send_message(self.user, 'Message approved and sent to all groups.')
