@@ -26,7 +26,7 @@ class MongodbClient:
     
     def __init__(self):
         self.access_list_url = f'https://cloud.mongodb.com/api/atlas/v1.0/groups/{PROJECT_ID}/accessList'
-        self.ip_whitelist_comment = f'Added programmatically ({"dev" if self.is_dev_server() else (prod)})'
+        self.ip_whitelist_comment = f'Added programmatically ({"dev" if self.is_dev_server() else "prod"})'
         self.whitelist_ip()
         self.client = MongoClient(MONGO_URI, tlsCAFile=certifi.where())
 
