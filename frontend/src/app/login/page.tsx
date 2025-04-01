@@ -1,20 +1,21 @@
-import { useState } from 'react';
+'use client';
+
+import { ChangeEvent, FormEvent, useState } from 'react';
 import { Box, TextField } from '@mui/material';
+import { Link } from '@/components/Link';
+import '@/scss/login.scss';
 
-import '../scss/login.scss';
-import { Link } from './Link';
-
-export const Login = () => {
-  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+export default function Login() {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const [username, setUsername] = useState('');
 
-  const handleChange = (e: any) => {
-    const { value } = e.target;
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
 
     setUsername(value);
   };
 
-  const onSubmit = (event: any) => {
+  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     fetch(`${apiUrl}api/get-client-id/${username}`, {
@@ -56,7 +57,7 @@ export const Login = () => {
               Login with GroupMe
             </button>
             <Link link={{url: `/signup/`, is_external_link: false}} className='signup-link'>
-              Don't have a username. Create a new one.
+              {"Don't have a username. Create a new one."}
             </Link>
           </Box>
         </div>

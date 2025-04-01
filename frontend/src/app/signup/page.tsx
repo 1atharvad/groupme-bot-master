@@ -1,25 +1,27 @@
-import { useState } from 'react';
+'use client';
+
+import { ChangeEvent, FormEvent, useState } from 'react';
 import { Box, TextField } from '@mui/material';
+import { Link } from '@/components/Link';
 
-import '../scss/login.scss';
-import { Link } from './Link';
+import '@/scss/login.scss';
 
-export const Signup = () => {
-  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
+export default function Signup() {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const [inputValues, setInputValues] = useState({
     'username': '',
     'client_id': ''
   });
 
-  const handleChange = (e: any) => {
-    const { name, value } = e.target;
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
 
     setInputValues((prevValues) => {
       return {...prevValues, [name]: value}
     });
   };
 
-  const onSubmit = (event: any) => {
+  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     fetch(`${apiUrl}api/set-client-id`, {

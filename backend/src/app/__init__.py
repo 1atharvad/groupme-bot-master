@@ -9,8 +9,8 @@ from .webhook import router as webhook_router
 
 app = FastAPI()
 
-frontend_path = os.path.abspath(os.path.join(os.getcwd(), "../frontend/dist/assets"))
-app.mount("/assets", StaticFiles(directory=frontend_path), name="static")
+frontend_path = os.path.abspath(os.path.join(os.getcwd(), "../frontend/dist/_next/static"))
+app.mount("/_next/static", StaticFiles(directory=frontend_path), name="static")
 
 app.add_middleware(
     CORSMiddleware,

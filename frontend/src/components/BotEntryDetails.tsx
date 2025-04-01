@@ -1,7 +1,7 @@
-import { Button, FormControl, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import { Delete as DeleteIcon } from '@mui/icons-material';
-import { Dispatch, SetStateAction } from "react";
-import { BotDetails } from "../constants";
+import { ChangeEvent, Dispatch, SetStateAction } from "react";
+import { BotDetails } from "@/app/constants";
 
 export const BotEntryDetails = ({
   id,
@@ -16,8 +16,8 @@ export const BotEntryDetails = ({
   existingGroupIds: string[],
   handleDelete: () => void
 }) => {
-  const handleChange = (e: any) => {
-    const { name, value } = e.target;
+  const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent) => {
+    const { name, value } = event.target;
     const group_details = name === 'group_name'
       ? groupIds.reduce((acc, group) => group.name === value ? {'group_id': group.id, 'group_name': group.name} : acc, {})
       : {[name]: value};

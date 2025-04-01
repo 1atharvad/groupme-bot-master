@@ -1,16 +1,20 @@
+'use client';
+
 import { Box, Button, Divider, Fab } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import { FormEvent, useEffect, useState } from "react";
-import '../scss/admin.scss';
-import { BotEntryDetails } from "./BotEntryDetails";
-import { BotDetails } from "../constants";
+import { BotEntryDetails } from "@/components/BotEntryDetails";
+import { BotDetails } from "@/app/constants";
+import { useAuthRedirect } from '@/hooks/useAuthRedirect';
+import '@/scss/admin.scss';
 
-export const Admin = () => {
-  const apiUrl = import.meta.env.VITE_REACT_APP_API_URL;
-  const storedUsername = sessionStorage.getItem("username");
+export default function Admin() {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const [storedUsername, setStoredUsername] = useState<string | null>(null);
   const [groupIds, setGroupIds] = useState<{[key: string]: string}[]>([]);
   const [groupDetails, setGroupDetails] = useState<{[key: string]: BotDetails[]}>({});
   const [existingGroupIds, setExistingGroupIds] = useState<string[]>([]);
+  useAuthRedirect();
 
   const defaultBotDetails: BotDetails = {
     '_id': '',
@@ -21,6 +25,13 @@ export const Admin = () => {
     'type': '',
     'bot_status': 'created'
   }
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const username = sessionStorage.getItem("username");
+      setStoredUsername(username);
+    }
+  }, []);
 
   useEffect(() => {
     if (storedUsername) {
@@ -52,7 +63,7 @@ export const Admin = () => {
         })
         .catch((error) => console.error("Error fetching client ID:", error));
     }
-  }, [storedUsername]);
+  }, [storedUsername, apiUrl]);
 
   useEffect(() => {
     setExistingGroupIds(Object.values(groupDetails).flat().map((group: BotDetails) => group.group_id));

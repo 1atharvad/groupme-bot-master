@@ -1,7 +1,7 @@
 @use 'global-colors' as colors;
 @use 'global-vars' as vars;
 
-body {
+.body-tag {
   background-color: colors.$background-color;
   font-family: vars.$font-dosis;
   margin: 0;

@@ -1,4 +1,4 @@
-import { Link } from "./Link";
+import { Link } from "@/components/Link";
 import '../scss/global/global-header.scss';
 
 export const Header = () => {

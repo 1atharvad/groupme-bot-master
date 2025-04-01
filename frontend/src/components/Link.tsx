@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
-import { Link as RouterLink } from "react-router-dom";
-import { Link as MatLink } from "@mui/material";
+import NextLink from 'next/link';
 
 interface Link {
   url: string,
@@ -10,12 +9,12 @@ interface Link {
 
 export const Link = ({ link, className, children }: { link: Link, className?: string, children: ReactNode }) => {
   return link.is_external_link ? (
-    <MatLink href={link.url} target="_blank" rel="noopener noreferrer" title={link.text} className={className}>
+    <NextLink href={link.url} target="_blank" rel="noopener noreferrer" title={link.text} className={className}>
       {children}
-    </MatLink>
+    </NextLink>
   ) : (
-    <MatLink component={RouterLink} to={link.url} title={link.text} className={className}>
+    <NextLink href={link.url} title={link.text} className={className}>
       {children}
-    </MatLink>
+    </NextLink>
   );
 };

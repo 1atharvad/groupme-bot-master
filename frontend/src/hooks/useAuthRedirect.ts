@@ -1,8 +1,10 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+'use client';
 
-const useAuthRedirect = () => {
-  const navigate = useNavigate();
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
+export const useAuthRedirect = () => {
+  const router = useRouter();
 
   useEffect(() => {
     if (["/admin", "/admin/"].includes(window.location.pathname)) {
@@ -12,7 +14,7 @@ const useAuthRedirect = () => {
 
       if (!storedToken) {
         if (!accessToken) {
-          navigate("/login/");
+          router.push("/login");
         } else {
           sessionStorage.setItem("access_token", accessToken);
           window.history.replaceState({}, document.title, window.location.pathname);
@@ -21,7 +23,5 @@ const useAuthRedirect = () => {
         window.history.replaceState({}, document.title, window.location.pathname);
       }
     }
-  }, [navigate]);
+  }, [router]);
 };
-
-export default useAuthRedirect;

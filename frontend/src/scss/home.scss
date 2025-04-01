@@ -1,0 +1,17 @@
+@use 'global/global-colors' as colors;
+
+.dashboard {
+  align-items: center;
+  color: colors.$text-color;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100vh;
+  margin-top: -64px;
+}
+
+.title {
+  font-size: min(9vw, 12vh);
+  margin: 0 30px;
+  text-align: center;
+}
